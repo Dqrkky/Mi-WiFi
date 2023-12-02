@@ -265,3 +265,6 @@ class Xiaomi:
                 ).json()
                 if data != None and "info" in data and data["info"] != None and isinstance(data["info"], list):
                     return data["info"]
+
+xx = Xiaomi()
+print(xx.sha1("test"))``
