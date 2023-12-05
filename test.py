@@ -5,4 +5,4 @@ mw = miwifi.Xiaomi(
 )
 
 print(mw.login())
-print(mw.lan_dhcp())
+print(mw.check_wan_type())

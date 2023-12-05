@@ -6,41 +6,29 @@ import shared
 
 config2 = {
     "xqnetwork": {
-        "lan_info": {
+        "mac_clone": {
             "method": "get",
-            "url": "{}/api/xqnetwork/lan_info"
+            "url": "{}/api/xqnetwork/mac_clone",
+            "params": {
+                "mac": "A4:39:B3:AF:EF:C4"
+            }
         },
-        "macbind_info": {
-            "method": "get",
-            "url": "{}/api/xqnetwork/macbind_info"
+        "set_wan_speed": {
+            "method": "post",
+            "url": "{}/api/xqnetwork/set_wan_speed",
+            "data": {
+                "speed": 1000
+            }
         },
-        "ddns": {
-            "method": "get",
-            "url": "{}/api/xqnetwork/ddns"
-        },
-        "portforward": {
-            "method": "get",
-            "url": "{}/api/xqnetwork/portforward"
-        },
-        "dmz": {
-            "method": "get",
-            "url": "{}/api/xqnetwork/dmz"
-        },
-        "wifiap_signal": {
-            "method": "get",
-            "url": "{}/api/xqnetwork/wifiap_signal"
-        },
-        "wifi_list": {
-            "method": "get",
-            "url": "{}/api/xqnetwork/wifi_list"
-        },
-        "set_all_wifi": {
-            "method": "get",
-            "url": "{}/api/xqnetwork/set_all_wifi"
-        },
-        "check_wan_type": {
-            "method": "get",
-            "url": "{}/api/xqnetwork/check_wan_type"
+        "set_wan": {
+            "method": "post",
+            "url": "{}/api/xqnetwork/set_wan",
+            "data": {
+                "wanType": "dhcp",
+                "autoset": 1,
+                "dns1": "192.168.1.1",
+                "dns2": ""
+            }
         }
     },
     "misystem": {
@@ -127,6 +115,14 @@ config2 = {
         "reboot": {
             "method": "get",
             "url": "{}/api/xqsystem/reboot"
+        },
+        "set_mac_filter": {
+            "method": "get",
+            "url": "{}/api/xqsystem/set_mac_filter",
+            "params": {
+                "mac": "A4:39:B3:AF:EF:C4",
+                "wan": 1
+            }
         }
     },
     "misns": {
@@ -274,6 +270,123 @@ class Xiaomi:
             config = {
                 "method": "get",
                 "url": f'{self.config["getaway"]}/api/xqnetwork/lan_dhcp'
+            }
+            data = self.rss.request(
+                *self.shared.convert_json_to_values(
+                    config=config
+                )
+            ).json()
+            if data != None and "code" in data and data["code"] != None and isinstance(data["code"], int) and data["code"] == 0:
+                return data
+    def lan_info(self):
+        if "getaway" in self.config and self.config["getaway"] != None:
+            config = {
+                "method": "get",
+                "url": f'{self.config["getaway"]}/api/xqnetwork/lan_info'
+            }
+            data = self.rss.request(
+                *self.shared.convert_json_to_values(
+                    config=config
+                )
+            ).json()
+            if data != None and "code" in data and data["code"] != None and isinstance(data["code"], int) and data["code"] == 0:
+                return data
+    def macbind_info(self):
+        if "getaway" in self.config and self.config["getaway"] != None:
+            config = {
+                "method": "get",
+                "url": f'{self.config["getaway"]}/api/xqnetwork/macbind_info'
+            }
+            data = self.rss.request(
+                *self.shared.convert_json_to_values(
+                    config=config
+                )
+            ).json()
+            if data != None and "code" in data and data["code"] != None and isinstance(data["code"], int) and data["code"] == 0:
+                return data
+    def ddns(self):
+        if "getaway" in self.config and self.config["getaway"] != None:
+            config = {
+                "method": "get",
+                "url": f'{self.config["getaway"]}/api/xqnetwork/ddns'
+            }
+            data = self.rss.request(
+                *self.shared.convert_json_to_values(
+                    config=config
+                )
+            ).json()
+            if data != None and "code" in data and data["code"] != None and isinstance(data["code"], int) and data["code"] == 0:
+                return data
+    def portforward(self):
+        if "getaway" in self.config and self.config["getaway"] != None:
+            config = {
+                "method": "get",
+                "url": f'{self.config["getaway"]}/api/xqnetwork/portforward'
+            }
+            data = self.rss.request(
+                *self.shared.convert_json_to_values(
+                    config=config
+                )
+            ).json()
+            if data != None and "code" in data and data["code"] != None and isinstance(data["code"], int) and data["code"] == 0:
+                return data
+    def dmz(self):
+        if "getaway" in self.config and self.config["getaway"] != None:
+            config = {
+                "method": "get",
+                "url": f'{self.config["getaway"]}/api/xqnetwork/dmz'
+            }
+            data = self.rss.request(
+                *self.shared.convert_json_to_values(
+                    config=config
+                )
+            ).json()
+            if data != None and "code" in data and data["code"] != None and isinstance(data["code"], int) and data["code"] == 0:
+                return data
+    def wifiap_signal(self):
+        if "getaway" in self.config and self.config["getaway"] != None:
+            config = {
+                "method": "get",
+                "url": f'{self.config["getaway"]}/api/xqnetwork/wifiap_signal'
+            }
+            data = self.rss.request(
+                *self.shared.convert_json_to_values(
+                    config=config
+                )
+            ).json()
+            if data != None and "code" in data and data["code"] != None and isinstance(data["code"], int) and data["code"] == 0:
+                return data
+    def wifi_list(self):
+        if "getaway" in self.config and self.config["getaway"] != None:
+            config = {
+                "method": "get",
+                "url": f'{self.config["getaway"]}/api/xqnetwork/wifi_list'
+            }
+            data = self.rss.request(
+                *self.shared.convert_json_to_values(
+                    config=config
+                )
+            ).json()
+            if data != None and "code" in data and data["code"] != None and isinstance(data["code"], int) and data["code"] == 0:
+                return data
+    def set_all_wifi(self):
+        if "getaway" in self.config and self.config["getaway"] != None:
+            config = {
+                "method": "get",
+                "url": f'{self.config["getaway"]}/api/xqnetwork/set_all_wifi'
+            }
+            data = self.rss.request(
+                *self.shared.convert_json_to_values(
+                    config=config
+                )
+            ).json()
+            if data != None and "code" in data and data["code"] != None and isinstance(data["code"], int) and data["code"] == 0:
+                return data
+    def check_wan_type(self):
+        if "getaway" in self.config and self.config["getaway"] != None:
+            config = {
+                "method": "get",
+                "url": f'{self.config["getaway"]}/api/xqnetwork/check_wan_type'
             }
             data = self.rss.request(
                 *self.shared.convert_json_to_values(
