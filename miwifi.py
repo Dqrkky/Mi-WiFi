@@ -6,166 +6,133 @@ import shared
 
 config2 = {
     "xqnetwork": {
-        "wan_info": {
-            "method": "get",
-            "url": "{}/api/xqnetwork/wan_info",
-            "aftermethod": "json"
-        },
-        "pppoe_status": {
-            "method": "get",
-            "url": "{}/api/xqnetwork/pppoe_status",
-            "aftermethod": "json"
-        },
-        "wifi_macfilter_info": {
-            "method": "get",
-            "url": "{}/api/xqnetwork/wifi_macfilter_info",
-            "aftermethod": "json"
-        },
-        "lan_dhcp": {
-            "method": "get",
-            "url": "{}/api/xqnetwork/lan_dhcp",
-            "aftermethod": "json"
-        },
         "lan_info": {
             "method": "get",
-            "url": "{}/api/xqnetwork/lan_info",
-            "aftermethod": "json"
+            "url": "{}/api/xqnetwork/lan_info"
         },
         "macbind_info": {
             "method": "get",
-            "url": "{}/api/xqnetwork/macbind_info",
-            "aftermethod": "json"
+            "url": "{}/api/xqnetwork/macbind_info"
         },
         "ddns": {
             "method": "get",
-            "url": "{}/api/xqnetwork/ddns",
-            "aftermethod": "json"
+            "url": "{}/api/xqnetwork/ddns"
         },
         "portforward": {
             "method": "get",
-            "url": "{}/api/xqnetwork/portforward",
-            "aftermethod": "json"
+            "url": "{}/api/xqnetwork/portforward"
         },
         "dmz": {
             "method": "get",
-            "url": "{}/api/xqnetwork/dmz",
-            "aftermethod": "json"
+            "url": "{}/api/xqnetwork/dmz"
         },
         "wifiap_signal": {
             "method": "get",
-            "url": "{}/api/xqnetwork/wifiap_signal",
-            "aftermethod": "json"
+            "url": "{}/api/xqnetwork/wifiap_signal"
         },
         "wifi_list": {
             "method": "get",
-            "url": "{}/api/xqnetwork/wifi_list",
-            "aftermethod": "json"
+            "url": "{}/api/xqnetwork/wifi_list"
         },
         "set_all_wifi": {
             "method": "get",
-            "url": "{}/api/xqnetwork/set_all_wifi",
-            "aftermethod": "json"
+            "url": "{}/api/xqnetwork/set_all_wifi"
         },
         "check_wan_type": {
             "method": "get",
-            "url": "{}/api/xqnetwork/check_wan_type",
-            "aftermethod": "json"
+            "url": "{}/api/xqnetwork/check_wan_type"
         }
     },
     "misystem": {
         "devicelist": {
             "method": "get",
-            "url": "{}/api/misystem/devicelist",
-            "aftermethod": "json"
+            "url": "{}/api/misystem/devicelist"
         },
         "sys_time": {
             "method": "get",
-            "url": "{}/api/misystem/sys_time",
-            "aftermethod": "json"
+            "url": "{}/api/misystem/sys_time"
         },
         "qos_info": {
             "method": "get",
-            "url": "{}/api/misystem/qos_info",
-            "aftermethod": "json"
+            "url": "{}/api/misystem/qos_info"
         },
         "smartvpn_info": {
             "method": "get",
-            "url": "{}/api/misystem/smartvpn_info",
-            "aftermethod": "json"
+            "url": "{}/api/misystem/smartvpn_info"
         },
         "mi_vpn_info": {
             "method": "get",
-            "url": "{}/api/misystem/mi_vpn_info",
-            "aftermethod": "json"
+            "url": "{}/api/misystem/mi_vpn_info"
         },
         "set_router_name": {
             "method": "get",
             "url": "{}/api/misystem/set_router_name",
-            "aftermethod": "json"
+            "params": {
+                "name": "Xiomi" 
+            }
         },
         "newstatus": {
             "method": "get",
-            "url": "{}/api/misystem/newstatus",
-            "aftermethod": "json"
+            "url": "{}/api/misystem/newstatus"
         },
         "status": {
             "method": "get",
-            "url": "{}/api/misystem/status",
-            "aftermethod": "json"
+            "url": "{}/api/misystem/status"
         },
         "messages": {
             "method": "get",
-            "url": "{}/api/misystem/messages",
-            "aftermethod": "json"
+            "url": "{}/api/misystem/messages"
         },
         "sys_log": {
             "method": "get",
-            "url": "{}/api/misystem/sys_log",
-            "aftermethod": "json"
+            "url": "{}/api/misystem/sys_log"
         },
         "get_elink": {
             "method": "get",
-            "url": "{}/api/misystem/get_elink",
-            "aftermethod": "json"
+            "url": "{}/api/misystem/get_elink"
         },
         "router_info": {
             "method": "get",
-            "url": "{}/api/misystem/router_info",
-            "aftermethod": "json"
+            "url": "{}/api/misystem/router_info"
+        },
+        "bandwidth_test": {
+            "method": "get",
+            "url": "{}/api/misystem/bandwidth_test"
+        },
+        "c_backup": {
+            "method": "get",
+            "url": "{}/api/misystem/c_backup",
+            "params": {
+                "keys": "mi_basic_info,mi_network_info,mi_wifi_info,mi_lan_info,mi_arn_info"
+            }
         }
     },
     "xqsystem": {
         "check_rom_update": {
             "method": "get",
-            "url": "{}/api/xqsystem/check_rom_update",
-            "aftermethod": "json"
+            "url": "{}/api/xqsystem/check_rom_update"
         },
         "get_location": {
             "method": "get",
-            "url": "{}/api/xqsystem/get_location",
-            "aftermethod": "json"
+            "url": "{}/api/xqsystem/get_location"
         },
         "vpn": {
             "method": "get",
-            "url": "{}/api/xqsystem/vpn",
-            "aftermethod": "json"
+            "url": "{}/api/xqsystem/vpn"
         },
         "upnp": {
             "method": "get",
-            "url": "{}/api/xqsystem/upnp",
-            "aftermethod": "json"
+            "url": "{}/api/xqsystem/upnp"
         },
         "reboot": {
             "method": "get",
-            "url": "{}/api/xqsystem/reboot",
-            "aftermethod": "json"
+            "url": "{}/api/xqsystem/reboot"
         }
     },
     "misns": {
         "wifi_share_info": {
             "method": "get",
-            "url": "{}/api/misns/wifi_share_info",
-            "aftermethod": "json"
+            "url": "{}/api/misns/wifi_share_info"
         }
     },
     "xqnetdetect": {
@@ -236,8 +203,7 @@ class Xiaomi:
                     ),
                     "nonce": nonce,
                     "logtype": 2
-                },
-                "aftermethod": "json"
+                }
             }
             data = self.rss.request(
                 *self.shared.convert_json_to_values(
@@ -252,19 +218,67 @@ class Xiaomi:
                     "getaway": self.config["getaway"]
                 }
     def wifi_detail_all(self):
-            if "getaway" in self.config and self.config["getaway"] != None:
-                config = {
-                    "method": "get",
-                    "url": f'{self.config["getaway"]}/api/xqnetwork/wifi_detail_all',
-                    "aftermethod": "json"
-                }
-                data = self.rss.request(
-                    *self.shared.convert_json_to_values(
-                        config=config
-                    )
-                ).json()
-                if data != None and "info" in data and data["info"] != None and isinstance(data["info"], list):
-                    return data["info"]
-
-xx = Xiaomi()
-print(xx.sha1("test"))``
+        if "getaway" in self.config and self.config["getaway"] != None:
+            config = {
+                "method": "get",
+                "url": f'{self.config["getaway"]}/api/xqnetwork/wifi_detail_all'
+            }
+            data = self.rss.request(
+                *self.shared.convert_json_to_values(
+                    config=config
+                )
+            ).json()
+            if data != None and "code" in data and data["code"] != None and isinstance(data["code"], int) and data["code"] == 0:
+                return data
+    def wan_info(self):
+        if "getaway" in self.config and self.config["getaway"] != None:
+            config = {
+                "method": "get",
+                "url": f'{self.config["getaway"]}/api/xqnetwork/wan_info'
+            }
+            data = self.rss.request(
+                *self.shared.convert_json_to_values(
+                    config=config
+                )
+            ).json()
+            if data != None and "code" in data and data["code"] != None and isinstance(data["code"], int) and data["code"] == 0:
+                return data
+    def pppoe_status(self):
+        if "getaway" in self.config and self.config["getaway"] != None:
+            config = {
+                "method": "get",
+                "url": f'{self.config["getaway"]}/api/xqnetwork/pppoe_status'
+            }
+            data = self.rss.request(
+                *self.shared.convert_json_to_values(
+                    config=config
+                )
+            ).json()
+            if data != None and "code" in data and data["code"] != None and isinstance(data["code"], int) and data["code"] == 0:
+                return data
+    def wifi_macfilter_info(self):
+        if "getaway" in self.config and self.config["getaway"] != None:
+            config = {
+                "method": "get",
+                "url": f'{self.config["getaway"]}/api/xqnetwork/wifi_macfilter_info'
+            }
+            data = self.rss.request(
+                *self.shared.convert_json_to_values(
+                    config=config
+                )
+            ).json()
+            if data != None and "code" in data and data["code"] != None and isinstance(data["code"], int) and data["code"] == 0:
+                return data
+    def lan_dhcp(self):
+        if "getaway" in self.config and self.config["getaway"] != None:
+            config = {
+                "method": "get",
+                "url": f'{self.config["getaway"]}/api/xqnetwork/lan_dhcp'
+            }
+            data = self.rss.request(
+                *self.shared.convert_json_to_values(
+                    config=config
+                )
+            ).json()
+            if data != None and "code" in data and data["code"] != None and isinstance(data["code"], int) and data["code"] == 0:
+                return data
