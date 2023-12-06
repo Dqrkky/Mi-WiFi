@@ -5,4 +5,4 @@ mw = miwifi.Xiaomi(
 )
 
 print(mw.login())
-print(mw.check_wan_type())
+print(mw.set_wan_speed(speed=1000))

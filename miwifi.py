@@ -5,32 +5,6 @@ import random
 import shared
 
 config2 = {
-    "xqnetwork": {
-        "mac_clone": {
-            "method": "get",
-            "url": "{}/api/xqnetwork/mac_clone",
-            "params": {
-                "mac": "A4:39:B3:AF:EF:C4"
-            }
-        },
-        "set_wan_speed": {
-            "method": "post",
-            "url": "{}/api/xqnetwork/set_wan_speed",
-            "data": {
-                "speed": 1000
-            }
-        },
-        "set_wan": {
-            "method": "post",
-            "url": "{}/api/xqnetwork/set_wan",
-            "data": {
-                "wanType": "dhcp",
-                "autoset": 1,
-                "dns1": "192.168.1.1",
-                "dns2": ""
-            }
-        }
-    },
     "misystem": {
         "devicelist": {
             "method": "get",
@@ -395,3 +369,84 @@ class Xiaomi:
             ).json()
             if data != None and "code" in data and data["code"] != None and isinstance(data["code"], int) and data["code"] == 0:
                 return data
+    def mac_clone(self, mac_address :str=None):
+        if "getaway" in self.config and self.config["getaway"] != None and mac_address != None and isinstance(mac_address, str):
+            config = {
+                "method": "get",
+                "url": f'{self.config["getaway"]}/api/xqnetwork/mac_clone',
+                "params": {
+                    "mac": mac_address
+                }
+            }
+            data = self.rss.request(
+                *self.shared.convert_json_to_values(
+                    config=config
+                )
+            ).json()
+            if data != None and "code" in data and data["code"] != None and isinstance(data["code"], int):
+                return data["code"] == 0
+    def set_wan_speed(self, speed :int=None):
+        if "getaway" in self.config and self.config["getaway"] != None and speed != None and isinstance(speed, int) and speed in [0, 100, 1000]:
+            config = {
+                "method": "post",
+                "url": f'{self.config["getaway"]}/api/xqnetwork/set_wan_speed',
+                "data": {
+                    "speed": speed
+                }
+            }
+            data = self.rss.request(
+                *self.shared.convert_json_to_values(
+                    config=config
+                )
+            ).json()
+            if data != None and "code" in data and data["code"] != None and isinstance(data["code"], int):
+                return data["code"] == 0
+    def set_wan(self, wanType :str=None):
+        if "getaway" in self.config and self.config["getaway"] != None and wanType != None and isinstance(wanType, str) and wanType in ["pppoe", "dhcp", "static"]:
+            data = None
+            config = {
+                "method": "post",
+                "url": f'{self.config["getaway"]}/api/xqnetwork/set_wan',
+                "data": data
+            }
+            data = self.rss.request(
+                *self.shared.convert_json_to_values(
+                    config=config
+                )
+            ).json()
+            if data != None and "code" in data and data["code"] != None and isinstance(data["code"], int) and data["code"] == 0:
+                return data
+
+{
+    "wanType": "pppoe",
+    "pppoeName": "",
+    "pppoePwd": "",
+    "autoset": 0
+}
+
+{
+    "wanType": "pppoe",
+    "pppoeName": "",
+    "pppoePwd": "",
+    "autoset": 1,
+    "mtu": 1480,
+    "service": "",
+    "dns1": "",
+    "dns2": ""
+}
+
+{
+    "wanType": "dhcp",
+    "autoset": 1,
+    "dns1": "192.168.1.1",
+    "dns2": ""
+}
+
+{
+    "wanType": "static",
+    "staticIp": "",
+    "staticMask": "",
+    "staticGateway": "",
+    "dns1": "",
+    "dns2": ""
+}

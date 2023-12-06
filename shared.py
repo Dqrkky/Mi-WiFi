@@ -1,5 +1,4 @@
 import urllib
-import json
 
 class Shared:
     def __init__(self, rss=None):
@@ -29,7 +28,7 @@ class Shared:
                 config["method"] if "method" in config and config["method"] != None else None,
                 config["url"] if "url" in config and config["url"] != None else None,
                 config["params"] if "params" in config and config["params"] != None else None,
-                json.dumps(config["data"]) if "data" in config and config["data"] != None else None,
+                config["data"] if "data" in config and config["data"] != None else None,
                 config["headers"] if "headers" in config and config["headers"] != None else None,
                 config["cookies"] if "cookies" in config and config["cookies"] != None else None,
                 config["files"] if "files" in config and config["files"] != None else None,
