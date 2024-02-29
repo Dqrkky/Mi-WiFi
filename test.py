@@ -1,8 +1,9 @@
 import miwifi
 
-mw = miwifi.Xiaomi( 
+mw = miwifi.Xiaomi(
+    host="192.168.31.1",
     password="02335566"
 )
 
 print(mw.login())
-print(mw.set_wan_speed(speed=1000))
+print(mw.lan_info())
