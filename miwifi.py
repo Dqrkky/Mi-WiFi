@@ -5,51 +5,6 @@ import json
 import random
 import shared
 
-config2 = {
-    "xqsystem": {
-        "check_rom_update": {
-            "method": "get",
-            "url": "{}/api/xqsystem/check_rom_update"
-        },
-        "get_location": {
-            "method": "get",
-            "url": "{}/api/xqsystem/get_location"
-        },
-        "vpn": {
-            "method": "get",
-            "url": "{}/api/xqsystem/vpn"
-        },
-        "upnp": {
-            "method": "get",
-            "url": "{}/api/xqsystem/upnp"
-        },
-        "reboot": {
-            "method": "get",
-            "url": "{}/api/xqsystem/reboot"
-        },
-        "set_mac_filter": {
-            "method": "get",
-            "url": "{}/api/xqsystem/set_mac_filter",
-            "params": {
-                "mac": "A4:39:B3:AF:EF:C4",
-                "wan": 1
-            }
-        }
-    },
-    "misns": {
-        "wifi_share_info": {
-            "method": "get",
-            "url": "{}/api/misns/wifi_share_info"
-        }
-    },
-    "xqnetdetect": {
-        "nettb": {
-            "method": "get",
-            "url": "/cgi-bin/luci/api/xqnetdetect/nettb"
-        }
-    }
-}
-
 class Xiaomi:
     def __init__(self, host :str="http://router.miwifi.com", password :str=None):
         with requests.Session() as rss:
@@ -127,7 +82,7 @@ class Xiaomi:
                     data = req.json()
                     if data != None and "token" in data and data["token"] != None and isinstance(data["token"], str):
                         self.config["token"] = data["token"]
-                        self.config["getaway"] = f'http://{self.config["host"]}/cgi-bin/luci/;stok={self.config["token"]}'
+                        self.config["getaway"] = f'{self.config["host"]}/cgi-bin/luci/;stok={self.config["token"]}'
                         return {
                             "token": self.config["token"],
                             "getaway": self.config["getaway"]
@@ -541,3 +496,95 @@ class Xiaomi:
                         if not data["url"].startswith("http"):
                             data["url"] = f'{self.config["getaway"].split(":")[0]}://{data["url"]}'
                     return data
+    def check_rom_update(self):
+        if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and "getaway" in self.config and self.config["getaway"] != None:
+            config = {
+                "method": "get",
+                "url": f'{self.config["getaway"]}/api/xqsystem/check_rom_update'
+            }
+            req = self.request(
+                config=config
+            )
+            if req != None:
+                return req.json()
+    def get_location(self):
+        if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and "getaway" in self.config and self.config["getaway"] != None:
+            config = {
+                "method": "get",
+                "url": f'{self.config["getaway"]}/api/xqsystem/get_location'
+            }
+            req = self.request(
+                config=config
+            )
+            if req != None:
+                return req.json()
+    def vpn(self):
+        if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and "getaway" in self.config and self.config["getaway"] != None:
+            config = {
+                "method": "get",
+                "url": f'{self.config["getaway"]}/api/xqsystem/vpn'
+            }
+            req = self.request(
+                config=config
+            )
+            if req != None:
+                return req.json()
+    def upnp(self):
+        if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and "getaway" in self.config and self.config["getaway"] != None:
+            config = {
+                "method": "get",
+                "url": f'{self.config["getaway"]}/api/xqsystem/upnp'
+            }
+            req = self.request(
+                config=config
+            )
+            if req != None:
+                return req.json()
+    def reboot(self):
+        if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and "getaway" in self.config and self.config["getaway"] != None:
+            config = {
+                "method": "get",
+                "url": f'{self.config["getaway"]}/api/xqsystem/reboot'
+            }
+            req = self.request(
+                config=config
+            )
+            if req != None:
+                return req.json()
+    def set_mac_filter(self, mac :str=None):
+        if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and "getaway" in self.config and self.config["getaway"] != None and mac != None and isinstance(mac, str):
+            config = {
+                "method": "get",
+                "url": f'{self.config["getaway"]}/api/xqsystem/set_mac_filter',
+                "params": {
+                    "mac": mac,
+                    "wan": 1
+                }
+            }
+            req = self.request(
+                config=config
+            )
+            if req != None:
+                return req.json()
+    def wifi_share_info(self):
+        if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and "getaway" in self.config and self.config["getaway"] != None:
+            config = {
+                "method": "get",
+                "url": f'{self.config["getaway"]}/api/misns/wifi_share_info'
+            }
+            req = self.request(
+                config=config
+            )
+            if req != None:
+                return req.json()
+    def nettb(self):
+        if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and "host" in self.config and self.config["host"] != None:
+            config = {
+                "method": "get",
+                "url": f'{self.config["host"]}/cgi-bin/luci/api/xqnetdetect/nettb'
+            }
+            req = self.request(
+                config=config
+            )
+            if req != None:
+                return req.json()

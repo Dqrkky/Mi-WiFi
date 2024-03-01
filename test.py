@@ -10,8 +10,7 @@ mw = miwifi.Xiaomi(
 
 print(mw.login())
 
-url = mw.sys_log()["url"]
-ch = cacheDump.File(url.split("/")[-1].replace("-", "_").replace(":", "_"))
-ch.write(requests.get(url).content)
-tg = cacheDump.Zip(ch.path())
-print(tg.list())
+syslog = mw.sys_log()
+
+for file in cacheDump.Zip(bytes_=requests.get(syslog["url"]).content).list():
+    print(f'File : {file["name"]}\nContent : {file["content"].decode("utf-8")}\n\n')

@@ -1,5 +1,6 @@
 import os
 import tarfile
+import io
 
 class File:
     def __init__(self, file :str=None):
@@ -27,14 +28,32 @@ class File:
             return os.path.abspath(self.config["file"])
 
 class Zip:
-    def __init__(self, file :str=None):
+    def __init__(self, name :str=None, bytes_ :bytes=None):
         self.config = {
-            "file": file if file != None and isinstance(file, str) else None,
+            "name": name if name != None and isinstance(name, str) else None,
+            "bytes": bytes_ if bytes_ != None and isinstance(bytes_, bytes) else None
         }
     def list(self):
-        if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and "file" in self.config and self.config["file"] != None and os.path.exists(self.config["file"]):
-            with tarfile.open(
-                name=self.config["file"],
-                mode=f'r:{self.config["file"].split(".")[-1]}'
-            ) as fp:
-                return fp.list()
+        if hasattr(self, "config") and self.config != None and isinstance(self.config, dict):
+            def lis(fp):
+                return [
+                    {
+                        "name": file.name,
+                        "content": fp.extractfile(file).read()
+                    } 
+                    for file in fp.getmembers() if file.isfile()
+                ]
+            if "name" in self.config and self.config["name"] != None:
+                with tarfile.open(
+                    name=self.config["name"],
+                    mode=f'r:{self.config["name"].split(".")[-1]}'
+                ) as fp:
+                    return lis(fp)
+            if "bytes" in self.config and self.config["bytes"] != None:
+                with tarfile.open(
+                    fileobj=io.BytesIO(
+                        initial_bytes=self.config["bytes"]
+                    ),
+                    mode="r"
+                ) as fp:
+                    return lis(fp)
