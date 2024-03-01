@@ -6,70 +6,6 @@ import random
 import shared
 
 config2 = {
-    "misystem": {
-        "devicelist": {
-            "method": "get",
-            "url": "{}/api/misystem/devicelist"
-        },
-        "sys_time": {
-            "method": "get",
-            "url": "{}/api/misystem/sys_time"
-        },
-        "qos_info": {
-            "method": "get",
-            "url": "{}/api/misystem/qos_info"
-        },
-        "smartvpn_info": {
-            "method": "get",
-            "url": "{}/api/misystem/smartvpn_info"
-        },
-        "mi_vpn_info": {
-            "method": "get",
-            "url": "{}/api/misystem/mi_vpn_info"
-        },
-        "set_router_name": {
-            "method": "get",
-            "url": "{}/api/misystem/set_router_name",
-            "params": {
-                "name": "Xiomi" 
-            }
-        },
-        "newstatus": {
-            "method": "get",
-            "url": "{}/api/misystem/newstatus"
-        },
-        "status": {
-            "method": "get",
-            "url": "{}/api/misystem/status"
-        },
-        "messages": {
-            "method": "get",
-            "url": "{}/api/misystem/messages"
-        },
-        "sys_log": {
-            "method": "get",
-            "url": "{}/api/misystem/sys_log"
-        },
-        "get_elink": {
-            "method": "get",
-            "url": "{}/api/misystem/get_elink"
-        },
-        "router_info": {
-            "method": "get",
-            "url": "{}/api/misystem/router_info"
-        },
-        "bandwidth_test": {
-            "method": "get",
-            "url": "{}/api/misystem/bandwidth_test"
-        },
-        "c_backup": {
-            "method": "get",
-            "url": "{}/api/misystem/c_backup",
-            "params": {
-                "keys": "mi_basic_info,mi_network_info,mi_wifi_info,mi_lan_info,mi_arn_info"
-            }
-        }
-    },
     "xqsystem": {
         "check_rom_update": {
             "method": "get",
@@ -115,7 +51,7 @@ config2 = {
 }
 
 class Xiaomi:
-    def __init__(self, host :str="router.miwifi.com", password :str=None):
+    def __init__(self, host :str="http://router.miwifi.com", password :str=None):
         with requests.Session() as rss:
             self.rss = rss
         self.shared = shared.Shared(
@@ -129,6 +65,15 @@ class Xiaomi:
             "getaway": None,
             "token": None
         }
+    def request(self, config :dict=None):
+        if config != None and isinstance(config, dict):
+            req = self.rss.request(
+                *self.shared.convert_json_to_values(
+                    config=config
+                )
+            )
+            if req != None and req.status_code == 200:
+                return req
     def sha1(self=None, string :str=None):
         if string == None:
             return
@@ -163,7 +108,7 @@ class Xiaomi:
                 )
                 config = {
                     "method": "post",
-                    "url": f'http://{self.config["host"]}/cgi-bin/luci/api/xqsystem/login',
+                    "url": f'{self.config["host"]}/cgi-bin/luci/api/xqsystem/login',
                     "params": {
                         "username": "admin",
                         "password": self.get_password_hash(
@@ -175,200 +120,172 @@ class Xiaomi:
                         "logtype": 2
                     }
                 }
-                data = self.rss.request(
-                    *self.shared.convert_json_to_values(
-                        config=config
-                    )
-                ).json()
-                if data != None and "token" in data and data["token"] != None and isinstance(data["token"], str):
-                    self.config["token"] = data["token"]
-                    self.config["getaway"] = f'http://{self.config["host"]}/cgi-bin/luci/;stok={self.config["token"]}'
-                    return {
-                        "token": self.config["token"],
-                        "getaway": self.config["getaway"]
-                    }
+                req = self.request(
+                    config=config
+                )
+                if req != None:
+                    data = req.json()
+                    if data != None and "token" in data and data["token"] != None and isinstance(data["token"], str):
+                        self.config["token"] = data["token"]
+                        self.config["getaway"] = f'http://{self.config["host"]}/cgi-bin/luci/;stok={self.config["token"]}'
+                        return {
+                            "token": self.config["token"],
+                            "getaway": self.config["getaway"]
+                        }
     def wifi_detail_all(self):
         if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and "getaway" in self.config and self.config["getaway"] != None:
             config = {
                 "method": "get",
                 "url": f'{self.config["getaway"]}/api/xqnetwork/wifi_detail_all'
             }
-            data = self.rss.request(
-                *self.shared.convert_json_to_values(
-                    config=config
-                )
-            ).json()
-            if data != None and "code" in data and data["code"] != None and isinstance(data["code"], int) and data["code"] == 0:
-                return data
+            req = self.request(
+                config=config
+            )
+            if req != None:
+                return req.json()
     def wan_info(self):
         if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and "getaway" in self.config and self.config["getaway"] != None:
             config = {
                 "method": "get",
                 "url": f'{self.config["getaway"]}/api/xqnetwork/wan_info'
             }
-            data = self.rss.request(
-                *self.shared.convert_json_to_values(
-                    config=config
-                )
-            ).json()
-            if data != None and "code" in data and data["code"] != None and isinstance(data["code"], int) and data["code"] == 0:
-                return data
+            req = self.request(
+                config=config
+            )
+            if req != None:
+                return req.json()
     def pppoe_status(self):
         if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and "getaway" in self.config and self.config["getaway"] != None:
             config = {
                 "method": "get",
                 "url": f'{self.config["getaway"]}/api/xqnetwork/pppoe_status'
             }
-            data = self.rss.request(
-                *self.shared.convert_json_to_values(
-                    config=config
-                )
-            ).json()
-            if data != None and "code" in data and data["code"] != None and isinstance(data["code"], int) and data["code"] == 0:
-                return data
+            req = self.request(
+                config=config
+            )
+            if req != None:
+                return req.json()
     def wifi_macfilter_info(self):
         if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and "getaway" in self.config and self.config["getaway"] != None:
             config = {
                 "method": "get",
                 "url": f'{self.config["getaway"]}/api/xqnetwork/wifi_macfilter_info'
             }
-            data = self.rss.request(
-                *self.shared.convert_json_to_values(
-                    config=config
-                )
-            ).json()
-            if data != None and "code" in data and data["code"] != None and isinstance(data["code"], int) and data["code"] == 0:
-                return data
+            req = self.request(
+                config=config
+            )
+            if req != None:
+                return req.json()
     def lan_dhcp(self):
         if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and "getaway" in self.config and self.config["getaway"] != None:
             config = {
                 "method": "get",
                 "url": f'{self.config["getaway"]}/api/xqnetwork/lan_dhcp'
             }
-            data = self.rss.request(
-                *self.shared.convert_json_to_values(
-                    config=config
-                )
-            ).json()
-            if data != None and "code" in data and data["code"] != None and isinstance(data["code"], int) and data["code"] == 0:
-                return data
+            req = self.request(
+                config=config
+            )
+            if req != None:
+                return req.json()
     def lan_info(self):
         if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and "getaway" in self.config and self.config["getaway"] != None:
             config = {
                 "method": "get",
                 "url": f'{self.config["getaway"]}/api/xqnetwork/lan_info'
             }
-            data = self.rss.request(
-                *self.shared.convert_json_to_values(
-                    config=config
-                )
-            ).json()
-            if data != None and "code" in data and data["code"] != None and isinstance(data["code"], int) and data["code"] == 0:
-                return data
+            req = self.request(
+                config=config
+            )
+            if req != None:
+                return req.json()
     def macbind_info(self):
         if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and "getaway" in self.config and self.config["getaway"] != None:
             config = {
                 "method": "get",
                 "url": f'{self.config["getaway"]}/api/xqnetwork/macbind_info'
             }
-            data = self.rss.request(
-                *self.shared.convert_json_to_values(
-                    config=config
-                )
-            ).json()
-            if data != None and "code" in data and data["code"] != None and isinstance(data["code"], int) and data["code"] == 0:
-                return data
+            req = self.request(
+                config=config
+            )
+            if req != None:
+                return req.json()
     def ddns(self):
         if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and "getaway" in self.config and self.config["getaway"] != None:
             config = {
                 "method": "get",
                 "url": f'{self.config["getaway"]}/api/xqnetwork/ddns'
             }
-            data = self.rss.request(
-                *self.shared.convert_json_to_values(
-                    config=config
-                )
-            ).json()
-            if data != None and "code" in data and data["code"] != None and isinstance(data["code"], int) and data["code"] == 0:
-                return data
+            req = self.request(
+                config=config
+            )
+            if req != None:
+                return req.json()
     def portforward(self):
         if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and "getaway" in self.config and self.config["getaway"] != None:
             config = {
                 "method": "get",
                 "url": f'{self.config["getaway"]}/api/xqnetwork/portforward'
             }
-            data = self.rss.request(
-                *self.shared.convert_json_to_values(
-                    config=config
-                )
-            ).json()
-            if data != None and "code" in data and data["code"] != None and isinstance(data["code"], int) and data["code"] == 0:
-                return data
+            req = self.request(
+                config=config
+            )
+            if req != None:
+                return req.json()
     def dmz(self):
         if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and "getaway" in self.config and self.config["getaway"] != None:
             config = {
                 "method": "get",
                 "url": f'{self.config["getaway"]}/api/xqnetwork/dmz'
             }
-            data = self.rss.request(
-                *self.shared.convert_json_to_values(
-                    config=config
-                )
-            ).json()
-            if data != None and "code" in data and data["code"] != None and isinstance(data["code"], int) and data["code"] == 0:
-                return data
+            req = self.request(
+                config=config
+            )
+            if req != None:
+                return req.json()
     def wifiap_signal(self):
         if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and "getaway" in self.config and self.config["getaway"] != None:
             config = {
                 "method": "get",
                 "url": f'{self.config["getaway"]}/api/xqnetwork/wifiap_signal'
             }
-            data = self.rss.request(
-                *self.shared.convert_json_to_values(
-                    config=config
-                )
-            ).json()
-            if data != None and "code" in data and data["code"] != None and isinstance(data["code"], int) and data["code"] == 0:
-                return data
+            req = self.request(
+                config=config
+            )
+            if req != None:
+                return req.json()
     def wifi_list(self):
         if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and "getaway" in self.config and self.config["getaway"] != None:
             config = {
                 "method": "get",
                 "url": f'{self.config["getaway"]}/api/xqnetwork/wifi_list'
             }
-            data = self.rss.request(
-                *self.shared.convert_json_to_values(
-                    config=config
-                )
-            ).json()
-            if data != None and "code" in data and data["code"] != None and isinstance(data["code"], int) and data["code"] == 0:
-                return data
+            req = self.request(
+                config=config
+            )
+            if req != None:
+                return req.json()
     def set_all_wifi(self):
         if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and "getaway" in self.config and self.config["getaway"] != None:
             config = {
                 "method": "get",
                 "url": f'{self.config["getaway"]}/api/xqnetwork/set_all_wifi'
             }
-            data = self.rss.request(
-                *self.shared.convert_json_to_values(
-                    config=config
-                )
-            ).json()
-            if data != None and "code" in data and data["code"] != None and isinstance(data["code"], int) and data["code"] == 0:
-                return data
+            req = self.request(
+                config=config
+            )
+            if req != None:
+                return req.json()
     def check_wan_type(self):
         if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and "getaway" in self.config and self.config["getaway"] != None:
             config = {
                 "method": "get",
                 "url": f'{self.config["getaway"]}/api/xqnetwork/check_wan_type'
             }
-            data = self.rss.request(
-                *self.shared.convert_json_to_values(
-                    config=config
-                )
-            ).json()
-            if data != None and "code" in data and data["code"] != None and isinstance(data["code"], int) and data["code"] == 0:
-                return data
+            req = self.request(
+                config=config
+            )
+            if req != None:
+                return req.json()
     def mac_clone(self, mac_address :str=None):
         if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and "getaway" in self.config and self.config["getaway"] != None and mac_address != None and isinstance(mac_address, str):
             config = {
@@ -378,13 +295,11 @@ class Xiaomi:
                     "mac": mac_address
                 }
             }
-            data = self.rss.request(
-                *self.shared.convert_json_to_values(
-                    config=config
-                )
-            ).json()
-            if data != None and "code" in data and data["code"] != None and isinstance(data["code"], int):
-                return data["code"] == 0
+            req = self.request(
+                config=config
+            )
+            if req != None:
+                return req.json()
     def set_wan_speed(self, speed :int=None):
         if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and "getaway" in self.config and self.config["getaway"] != None and speed != None and isinstance(speed, int) and speed in [0, 100, 1000]:
             config = {
@@ -394,13 +309,11 @@ class Xiaomi:
                     "speed": speed
                 }
             }
-            data = self.rss.request(
-                *self.shared.convert_json_to_values(
-                    config=config
-                )
-            ).json()
-            if data != None and "code" in data and data["code"] != None and isinstance(data["code"], int):
-                return data["code"] == 0
+            req = self.request(
+                config=config
+            )
+            if req != None:
+                return req.json()
     def set_wan(self, wanType :str=None, pppoeName :str=None, pppoePwd :str=None, autoset :str=None, mtu :str=1480, service :str=None, dns1 :str=None, dns2 :str=None, staticIp :str=None, staticMask :str=None, staticGateway :str=None):
         if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and "getaway" in self.config and self.config["getaway"] != None and wanType != None and isinstance(wanType, str) and wanType in ["pppoe", "dhcp", "static"]:
             data = None
@@ -446,10 +359,185 @@ class Xiaomi:
                     "url": f'{self.config["getaway"]}/api/xqnetwork/set_wan',
                     "data": json.dumps(data)
                 }
-                data = self.rss.request(
-                    *self.shared.convert_json_to_values(
-                        config=config
-                    )
-                ).json()
-                if data != None and "code" in data and data["code"] != None and isinstance(data["code"], int) and data["code"] == 0:
+                req = self.request(
+                    config=config
+                )
+                if req != None:
+                    return req.json()
+    def devicelist(self):
+        if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and "getaway" in self.config and self.config["getaway"] != None:
+            config = {
+                "method": "get",
+                "url": f'{self.config["getaway"]}/api/misystem/devicelist'
+            }
+            req = self.request(
+                config=config
+            )
+            if req != None:
+                return req.json()
+    def sys_time(self):
+        if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and "getaway" in self.config and self.config["getaway"] != None:
+            config = {
+                "method": "get",
+                "url": f'{self.config["getaway"]}/api/misystem/sys_time'
+            }
+            req = self.request(
+                config=config
+            )
+            if req != None:
+                return req.json()
+    def qos_info(self):
+        if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and "getaway" in self.config and self.config["getaway"] != None:
+            config = {
+                "method": "get",
+                "url": f'{self.config["getaway"]}/api/misystem/qos_info'
+            }
+            req = self.request(
+                config=config
+            )
+            if req != None:
+                return req.json()
+    def smartvpn_info(self):
+        if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and "getaway" in self.config and self.config["getaway"] != None:
+            config = {
+                "method": "get",
+                "url": f'{self.config["getaway"]}/api/misystem/smartvpn_info'
+            }
+            req = self.request(
+                config=config
+            )
+            if req != None:
+                return req.json()
+    def mi_vpn_info(self):
+        if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and "getaway" in self.config and self.config["getaway"] != None:
+            config = {
+                "method": "get",
+                "url": f'{self.config["getaway"]}/api/misystem/mi_vpn_info'
+            }
+            req = self.request(
+                config=config
+            )
+            if req != None:
+                return req.json()
+    def set_router_name(self, name :str=None):
+        if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and "getaway" in self.config and self.config["getaway"] != None and name != None and isinstance(name, str):
+            config = {
+                "method": "get",
+                "url": f'{self.config["getaway"]}/api/misystem/set_router_name',
+                "params": {
+                    "name": name
+                }
+            }
+            req = self.request(
+                config=config
+            )
+            if req != None:
+                return req.json()
+    def newstatus(self):
+        if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and "getaway" in self.config and self.config["getaway"] != None:
+            config = {
+                "method": "get",
+                "url": f'{self.config["getaway"]}/api/misystem/newstatus'
+            }
+            req = self.request(
+                config=config
+            )
+            if req != None:
+                return req.json()
+    def status(self):
+        if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and "getaway" in self.config and self.config["getaway"] != None:
+            config = {
+                "method": "get",
+                "url": f'{self.config["getaway"]}/api/misystem/status'
+            }
+            req = self.request(
+                config=config
+            )
+            if req != None:
+                return req.json()
+    def messages(self):
+        if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and "getaway" in self.config and self.config["getaway"] != None:
+            config = {
+                "method": "get",
+                "url": f'{self.config["getaway"]}/api/misystem/messages'
+            }
+            req = self.request(
+                config=config
+            )
+            if req != None:
+                return req.json()
+    def sys_log(self):
+        if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and "getaway" in self.config and self.config["getaway"] != None:
+            config = {
+                "method": "get",
+                "url": f'{self.config["getaway"]}/api/misystem/sys_log'
+            }
+            req = self.request(
+                config=config
+            )
+            if req != None:
+                data = req.json()
+                if data != None and isinstance(data, dict):
+                    if "path" in data and data["path"] != None and isinstance(data["path"], str):
+                        if not data["path"].startswith("http"):
+                            data["url"] = f'{self.config["getaway"].split(":")[0]}://{data["path"]}'
+                            data.pop("path")
+                    return data
+    def get_elink(self):
+        if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and "getaway" in self.config and self.config["getaway"] != None:
+            config = {
+                "method": "get",
+                "url": f'{self.config["getaway"]}/api/misystem/get_elink'
+            }
+            req = self.request(
+                config=config
+            )
+            if req != None:
+                return req.json()
+    def router_info(self):
+        if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and "getaway" in self.config and self.config["getaway"] != None:
+            config = {
+                "method": "get",
+                "url": f'{self.config["getaway"]}/api/misystem/router_info'
+            }
+            req = self.request(
+                config=config
+            )
+            if req != None:
+                return req.json()
+    def bandwidth_test(self):
+        if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and "getaway" in self.config and self.config["getaway"] != None:
+            config = {
+                "method": "get",
+                "url": f'{self.config["getaway"]}/api/misystem/bandwidth_test'
+            }
+            req = self.request(
+                config=config
+            )
+            if req != None:
+                return req.json()
+    def c_backup(self):
+        if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and "getaway" in self.config and self.config["getaway"] != None:
+            config = {
+                "method": "get",
+                "url": f'{self.config["getaway"]}/api/misystem/c_backup',
+                "params": {
+                    "keys": ','.join([
+                        "mi_basic_info",
+                        "mi_network_info",
+                        "mi_wifi_info",
+                        "mi_lan_info",
+                        "mi_arn_info"
+                    ])
+                }
+            }
+            req = self.request(
+                config=config
+            )
+            if req != None:
+                data = req.json()
+                if data != None and isinstance(data, dict):
+                    if "url" in data and data["url"] != None and isinstance(data["url"], str):
+                        if not data["url"].startswith("http"):
+                            data["url"] = f'{self.config["getaway"].split(":")[0]}://{data["url"]}'
                     return data

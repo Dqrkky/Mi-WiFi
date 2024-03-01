@@ -1,9 +1,17 @@
 import miwifi
+import cacheDump
+import requests
 
 mw = miwifi.Xiaomi(
-    host="192.168.31.1",
-    password="02335566"
+    password=""
 )
 
+
+
 print(mw.login())
-print(mw.lan_info())
+
+url = mw.sys_log()["url"]
+ch = cacheDump.File(url.split("/")[-1].replace("-", "_").replace(":", "_"))
+ch.write(requests.get(url).content)
+tg = cacheDump.Zip(ch.path())
+print(tg.list())
