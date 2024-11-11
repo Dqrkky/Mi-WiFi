@@ -6,8 +6,6 @@ mw = miwifi.Xiaomi(
     password=""
 )
 
-
-
 print(mw.login())
 
 syslog = mw.sys_log()
