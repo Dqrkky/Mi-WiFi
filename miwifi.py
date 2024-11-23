@@ -436,7 +436,6 @@ class Xiaomi:
                     if "path" in data and data["path"] != None and isinstance(data["path"], str):
                         if not data["path"].startswith("http"):
                             data["url"] = f'{self.config["getaway"].split(":")[0]}://{data["path"]}'
-                            data.pop("path")
                     return data
     def get_elink(self):
         if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and "getaway" in self.config and self.config["getaway"] != None:
