@@ -5,7 +5,7 @@ import dotenv
 
 data = dotenv.dotenv_values()
 mw = miwifi.Xiaomi(
-    password=data.get("PASSWORD")
+    password=data.get("PASSWORD", None)
 )
 
 syslog = mw.sys_log()
