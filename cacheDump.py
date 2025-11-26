@@ -7,8 +7,18 @@ class File:
         self.config = {
             "file": file if file != None and isinstance(file, str) else None,
         }
+    def has(
+        self,
+        attribute :str=None,
+        attributeinstance =dict
+    ):
+        return hasattr(self, attribute) and \
+            self.__getattribute__(attribute) != None and \
+            isinstance(self.__getattribute__(attribute), attributeinstance)
     def write(self, bytes_ :bytes=None):
-        if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and "file" in self.config and self.config["file"] != None and bytes_ != None and isinstance(bytes_, bytes):
+        if self.has("config", dict) \
+        and "file" in self.config and self.config["file"] != None \
+        and bytes_ != None and isinstance(bytes_, bytes):
             with open(
                 file=self.config["file"],
                 mode="wb+"
@@ -17,14 +27,16 @@ class File:
                     bytes_
                 )
     def read(self):
-        if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and "file" in self.config and self.config["file"] != None and os.path.exists(self.config["file"]):
+        if self.has("config", dict) \
+        and "file" in self.config and self.config["file"] != None and os.path.exists(self.config["file"]):
             with open(
                 file=self.config["file"],
                 mode="rb+"
             ) as fp:
                 return fp.read()
     def path(self):
-        if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and "file" in self.config and self.config["file"] != None and os.path.exists(self.config["file"]):
+        if self.has("config", dict) \
+        and "file" in self.config and self.config["file"] != None and os.path.exists(self.config["file"]):
             return os.path.abspath(self.config["file"])
 
 class Zip:
@@ -33,9 +45,34 @@ class Zip:
             "name": name if name != None and isinstance(name, str) else None,
             "bytes": bytes_ if bytes_ != None and isinstance(bytes_, bytes) else None
         }
+    def has(
+        self,
+        attribute :str=None,
+        attributeinstance =dict
+    ):
+        return hasattr(self, attribute) and \
+            self.__getattribute__(attribute) != None and \
+            isinstance(self.__getattribute__(attribute), attributeinstance)
     def list(self):
-        if hasattr(self, "config") and self.config != None and isinstance(self.config, dict):
-            def lis(fp):
+        if self.has("config", dict):
+            data = None
+            if "name" in self.config and self.config["name"] != None:
+                data = {
+                    "name": self.config["name"],
+                    "mode": f'r:{self.config["name"].split(".")[-1]}'
+                }
+            if "bytes" in self.config and self.config["bytes"] != None:
+                data = {
+                    "fileobj": io.BytesIO(
+                        initial_bytes=self.config["bytes"]
+                    ),
+                    "mode": "r"
+                }
+            if data == None and isinstance(data, dict) == False:
+                return
+            with tarfile.open(
+                **data
+            ) as fp:
                 return [
                     {
                         "name": file.name,
@@ -43,17 +80,3 @@ class Zip:
                     } 
                     for file in fp.getmembers() if file.isfile()
                 ]
-            if "name" in self.config and self.config["name"] != None:
-                with tarfile.open(
-                    name=self.config["name"],
-                    mode=f'r:{self.config["name"].split(".")[-1]}'
-                ) as fp:
-                    return lis(fp)
-            if "bytes" in self.config and self.config["bytes"] != None:
-                with tarfile.open(
-                    fileobj=io.BytesIO(
-                        initial_bytes=self.config["bytes"]
-                    ),
-                    mode="r"
-                ) as fp:
-                    return lis(fp)
