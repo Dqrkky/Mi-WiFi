@@ -2,26 +2,31 @@ import miwifi
 import cacheDump
 import requests
 import dotenv
+import time
 
 data = dotenv.dotenv_values()
+
 mw = miwifi.Xiaomi(
-    host=data.get("HOST", "http://192.168.31.1"),
+    host=data.get("HOST", None),
     password=data.get("PASSWORD", None)
 )
-syslog = mw.sys_log()
+while True:
+    print(mw.status().get("cpu"))
+    time.sleep(1)
+# syslog = mw.sys_log()
 
-print(
-    next((
-        f
-        for f in cacheDump.Zip(
-            bytes_=requests.request(**{
-                "method": "get",
-                "url": syslog["url"]
-            }).content
-        ).list()
-        if f["name"] == "tmp/iptables_save.log"
-    ), None).get("content", b"").decode("utf-8")
-)
+# print(
+#     next((
+#         f
+#         for f in cacheDump.Zip(
+#             bytes_=requests.request(**{
+#                 "method": "get",
+#                 "url": syslog["url"]
+#             }).content
+#         ).list()
+#         if f["name"] == "tmp/iptables_save.log"
+#     ), None).get("content", b"").decode("utf-8")
+# )
 # leases_file = next((
 #     f
 #     for f in cacheDump.Zip(
