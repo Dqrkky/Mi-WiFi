@@ -1,13 +1,16 @@
-import requests
+import __http
 import hashlib
 import time
 import random
 import typing
 
-class Xiaomi:
-    def __init__(self, host :str="http://router.miwifi.com", password :str=None):
-        with requests.Session() as rss:
-            self.rss = rss
+class Xiaomi(__http.Request):
+    def __init__(
+        self,
+        host :str | None="http://router.miwifi.com",
+        password :str | None=None
+    ):
+        super().__init__()
         self.config = {
             "key": "a2ffa5c9be07488bbb04a3a47d3c5f6a",
             "mac_prefix": "e4:46:da",
@@ -16,18 +19,18 @@ class Xiaomi:
             "getaway": None,
             "token": None
         }
-        if password != None and (isinstance(password, str) or isinstance(password, int)):  # noqa: E711
+        if password != None and isinstance(password, (str ,int)):  # noqa: E711
             self.login()
     def sha1(
         self=None,
-        string :str=None
+        string :str | None=None
     ):
         if string == None:  # noqa: E711
             return
         return hashlib.sha1(string.encode()).hexdigest()
     def get_random_mac(
         self=None,
-        prefix :str=None
+        prefix :str | None=None
     ):
         if prefix == None:  # noqa: E711
             return
@@ -37,16 +40,16 @@ class Xiaomi:
         ])
     def get_nonce(
         self=None,
-        mac_address :str=None
+        mac_address :str | None=None
     ):
         if mac_address == None:  # noqa: E711
             return
         return f"0_{mac_address}_{int(time.time())}_9999"
     def get_password_hash(
         self=None,
-        nonce :str=None,
-        password :str=None,
-        key :str=None
+        nonce :str | None=None,
+        password :str | None=None,
+        key :str | None=None
     ):
         if nonce == None:  # noqa: E711
             return
@@ -55,24 +58,20 @@ class Xiaomi:
         if key == None:  # noqa: E711
             return
         return self.sha1(nonce + self.sha1(password + key))
-    def requestJson(
+    @getattr
+    def validate(self):
+        return hasattr(self, "config") and self.config != None and isinstance(self.config, dict)
+    def login(
         self,
-        config :dict=None
+        host :str | None=None,
+        password :str | None=None
     ):
-        if config == None or isinstance(config, dict) == False:  # noqa: E711, E712
-            return
-        req = self.rss.request(
-            **config
-        )
-        if req and req.ok:
-            return req.json()
-    def login(self, host :str=None, password :str=None):
-        if hasattr(self, "config") and self.config != None and isinstance(self.config, dict):  # noqa: E711
+        if self.validate:
             if host != None and isinstance(host, str):  # noqa: E711
                 self.config["host"] = host
             if password != None and (isinstance(password, str) or isinstance(password, int)):  # noqa: E711
                 self.config["password"] = password
-            if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and \
+            if \
             "host" in self.config and self.config["host"] != None and \
             "password" in self.config and self.config["password"] != None:  # noqa: E711
                 nonce = self.get_nonce(
@@ -105,7 +104,7 @@ class Xiaomi:
                         "getaway": self.config["getaway"]
                     }
     def wifi_detail_all(self):
-        if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and \
+        if self.validate and \
         "getaway" in self.config and self.config["getaway"] != None:  # noqa: E711
             config = {
                 "method": "get",
@@ -113,7 +112,7 @@ class Xiaomi:
             }
             return self.requestJson(config)
     def wan_info(self):
-        if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and \
+        if self.validate and \
         "getaway" in self.config and self.config["getaway"] != None:  # noqa: E711
             config = {
                 "method": "get",
@@ -121,7 +120,7 @@ class Xiaomi:
             }
             return self.requestJson(config)
     def pppoe_status(self):
-        if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and \
+        if self.validate and \
         "getaway" in self.config and self.config["getaway"] != None:  # noqa: E711
             config = {
                 "method": "get",
@@ -129,7 +128,7 @@ class Xiaomi:
             }
             return self.requestJson(config)
     def wifi_macfilter_info(self):
-        if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and \
+        if self.validate and \
         "getaway" in self.config and self.config["getaway"] != None:  # noqa: E711
             config = {
                 "method": "get",
@@ -137,7 +136,7 @@ class Xiaomi:
             }
             return self.requestJson(config)
     def lan_dhcp(self):
-        if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and \
+        if self.validate and \
         "getaway" in self.config and self.config["getaway"] != None:  # noqa: E711
             config = {
                 "method": "get",
@@ -145,7 +144,7 @@ class Xiaomi:
             }
             return self.requestJson(config)
     def lan_info(self):
-        if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and \
+        if self.validate and \
         "getaway" in self.config and self.config["getaway"] != None:  # noqa: E711
             config = {
                 "method": "get",
@@ -153,7 +152,7 @@ class Xiaomi:
             }
             return self.requestJson(config)
     def macbind_info(self):
-        if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and \
+        if self.validate and \
         "getaway" in self.config and self.config["getaway"] != None:  # noqa: E711
             config = {
                 "method": "get",
@@ -161,7 +160,7 @@ class Xiaomi:
             }
             return self.requestJson(config)
     def ddns(self):
-        if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and \
+        if self.validate and \
         "getaway" in self.config and self.config["getaway"] != None:  # noqa: E711
             config = {
                 "method": "get",
@@ -169,7 +168,7 @@ class Xiaomi:
             }
             return self.requestJson(config)
     def portforward(self):
-        if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and \
+        if self.validate and \
         "getaway" in self.config and self.config["getaway"] != None:  # noqa: E711
             config = {
                 "method": "get",
@@ -177,7 +176,7 @@ class Xiaomi:
             }
             return self.requestJson(config)
     def dmz(self):
-        if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and \
+        if self.validate and \
         "getaway" in self.config and self.config["getaway"] != None:  # noqa: E711
             config = {
                 "method": "get",
@@ -185,7 +184,7 @@ class Xiaomi:
             }
             return self.requestJson(config)
     def wifiap_signal(self):
-        if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and \
+        if self.validate and \
         "getaway" in self.config and self.config["getaway"] != None:  # noqa: E711
             config = {
                 "method": "get",
@@ -193,7 +192,7 @@ class Xiaomi:
             }
             return self.requestJson(config)
     def wifi_list(self):
-        if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and \
+        if self.validate and \
         "getaway" in self.config and self.config["getaway"] != None:  # noqa: E711
             config = {
                 "method": "get",
@@ -201,7 +200,7 @@ class Xiaomi:
             }
             return self.requestJson(config)
     def set_all_wifi(self):
-        if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and \
+        if self.validate and \
         "getaway" in self.config and self.config["getaway"] != None:  # noqa: E711
             config = {
                 "method": "get",
@@ -209,7 +208,7 @@ class Xiaomi:
             }
             return self.requestJson(config)
     def check_wan_type(self):
-        if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and \
+        if self.validate and \
         "getaway" in self.config and self.config["getaway"] != None:  # noqa: E711
             config = {
                 "method": "get",
@@ -217,7 +216,7 @@ class Xiaomi:
             }
             return self.requestJson(config)
     def mac_clone(self, mac_address :str=None):
-        if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and \
+        if self.validate and \
         "getaway" in self.config and self.config["getaway"] != None and \
         mac_address != None and isinstance(mac_address, str):  # noqa: E711
             config = {
@@ -229,7 +228,7 @@ class Xiaomi:
             }
             return self.requestJson(config)
     def set_wan_speed(self, speed :int=None):
-        if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and \
+        if self.validate and \
         "getaway" in self.config and self.config["getaway"] != None and \
         speed != None and isinstance(speed, int) and speed in [0, 100, 1000]:  # noqa: E711
             config = {
@@ -255,7 +254,7 @@ class Xiaomi:
         staticGateway :str=None
     ):
         valid = lambda x, type_: x if x != None and type_ != None and isinstance(x, type_) else None  # noqa: E711, E731
-        if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and \
+        if self.validate and \
         "getaway" in self.config and self.config["getaway"] != None and \
         valid(wanType, str) and wanType in ["pppoe", "dhcp", "static"] and \
         valid(autoset, int) and 0 <= autoset <= 1:  # noqa: E711
@@ -323,7 +322,7 @@ class Xiaomi:
                 }
                 return self.requestJson(config)
     def devicelist(self):
-        if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and \
+        if self.validate and \
         "getaway" in self.config and self.config["getaway"] != None:  # noqa: E711
             config = {
                 "method": "get",
@@ -331,7 +330,7 @@ class Xiaomi:
             }
             return self.requestJson(config)
     def sys_time(self):
-        if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and \
+        if self.validate and \
         "getaway" in self.config and self.config["getaway"] != None:  # noqa: E711
             config = {
                 "method": "get",
@@ -339,7 +338,7 @@ class Xiaomi:
             }
             return self.requestJson(config)
     def qos_info(self):
-        if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and \
+        if self.validate and \
         "getaway" in self.config and self.config["getaway"] != None:  # noqa: E711
             config = {
                 "method": "get",
@@ -347,7 +346,7 @@ class Xiaomi:
             }
             return self.requestJson(config)
     def smartvpn_info(self):
-        if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and \
+        if self.validate and \
         "getaway" in self.config and self.config["getaway"] != None:  # noqa: E711
             config = {
                 "method": "get",
@@ -355,7 +354,7 @@ class Xiaomi:
             }
             return self.requestJson(config)
     def mi_vpn_info(self):
-        if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and \
+        if self.validate and \
         "getaway" in self.config and self.config["getaway"] != None:  # noqa: E711
             config = {
                 "method": "get",
@@ -363,7 +362,7 @@ class Xiaomi:
             }
             return self.requestJson(config)
     def set_router_name(self, name :str=None):
-        if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and \
+        if self.validate and \
         "getaway" in self.config and self.config["getaway"] != None and \
         name != None and isinstance(name, str):  # noqa: E711
             config = {
@@ -375,7 +374,7 @@ class Xiaomi:
             }
             return self.requestJson(config)
     def newstatus(self):
-        if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and \
+        if self.validate and \
         "getaway" in self.config and self.config["getaway"] != None:  # noqa: E711
             config = {
                 "method": "get",
@@ -383,7 +382,7 @@ class Xiaomi:
             }
             return self.requestJson(config)
     def status(self):
-        if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and \
+        if self.validate and \
         "getaway" in self.config and self.config["getaway"] != None:  # noqa: E711
             config = {
                 "method": "get",
@@ -391,7 +390,7 @@ class Xiaomi:
             }
             return self.requestJson(config)
     def messages(self):
-        if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and \
+        if self.validate and \
         "getaway" in self.config and self.config["getaway"] != None:  # noqa: E711
             config = {
                 "method": "get",
@@ -399,7 +398,7 @@ class Xiaomi:
             }
             return self.requestJson(config)
     def sys_log(self):
-        if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and \
+        if self.validate and \
         "getaway" in self.config and self.config["getaway"] != None:  # noqa: E711
             config = {
                 "method": "get",
@@ -412,7 +411,7 @@ class Xiaomi:
                         data["url"] = f'{self.config["getaway"].split(":")[0]}://{data["path"]}'
                 return data
     def get_elink(self):
-        if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and \
+        if self.validate and \
         "getaway" in self.config and self.config["getaway"] != None:  # noqa: E711
             config = {
                 "method": "get",
@@ -420,7 +419,7 @@ class Xiaomi:
             }
             return self.requestJson(config)
     def router_info(self):
-        if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and \
+        if self.validate and \
         "getaway" in self.config and self.config["getaway"] != None:  # noqa: E711
             config = {
                 "method": "get",
@@ -428,7 +427,7 @@ class Xiaomi:
             }
             return self.requestJson(config)
     def bandwidth_test(self):
-        if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and \
+        if self.validate and \
         "getaway" in self.config and self.config["getaway"] != None:  # noqa: E711
             config = {
                 "method": "get",
@@ -451,7 +450,7 @@ class Xiaomi:
             "mi_arn_info"
         ]
     ):
-        if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and \
+        if self.validate and \
         "getaway" in self.config and self.config["getaway"] != None:  # noqa: E711
             config = {
                 "method": "get",
@@ -467,7 +466,7 @@ class Xiaomi:
                         data["url"] = f'{self.config["getaway"].split(":")[0]}://{data["url"]}'
                 return data
     def check_rom_update(self):
-        if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and \
+        if self.validate and \
         "getaway" in self.config and self.config["getaway"] != None:  # noqa: E711
             config = {
                 "method": "get",
@@ -475,7 +474,7 @@ class Xiaomi:
             }
             return self.requestJson(config)
     def get_location(self):
-        if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and \
+        if self.validate and \
         "getaway" in self.config and self.config["getaway"] != None:  # noqa: E711
             config = {
                 "method": "get",
@@ -483,7 +482,7 @@ class Xiaomi:
             }
             return self.requestJson(config)
     def vpn(self):
-        if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and \
+        if self.validate and \
         "getaway" in self.config and self.config["getaway"] != None:  # noqa: E711
             config = {
                 "method": "get",
@@ -491,7 +490,7 @@ class Xiaomi:
             }
             return self.requestJson(config)
     def upnp(self):
-        if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and \
+        if self.validate and \
         "getaway" in self.config and self.config["getaway"] != None:  # noqa: E711
             config = {
                 "method": "get",
@@ -499,7 +498,7 @@ class Xiaomi:
             }
             return self.requestJson(config)
     def reboot(self):
-        if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and \
+        if self.validate and \
         "getaway" in self.config and self.config["getaway"] != None:  # noqa: E711
             config = {
                 "method": "get",
@@ -507,7 +506,7 @@ class Xiaomi:
             }
             return self.requestJson(config)
     def set_mac_filter(self, mac :str=None):
-        if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and \
+        if self.validate and \
         "getaway" in self.config and self.config["getaway"] != None and \
         mac != None and isinstance(mac, str):  # noqa: E711
             config = {
@@ -520,7 +519,7 @@ class Xiaomi:
             }
             return self.requestJson(config)
     def wifi_share_info(self):
-        if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and \
+        if self.validate and \
         "getaway" in self.config and self.config["getaway"] != None:  # noqa: E711
             config = {
                 "method": "get",
@@ -528,7 +527,7 @@ class Xiaomi:
             }
             return self.requestJson(config)
     def nettb(self):
-        if hasattr(self, "config") and self.config != None and isinstance(self.config, dict) and \
+        if self.validate and \
         "host" in self.config and self.config["host"] != None:  # noqa: E711
             config = {
                 "method": "get",
